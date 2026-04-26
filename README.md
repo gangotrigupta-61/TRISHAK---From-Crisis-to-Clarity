@@ -6,8 +6,6 @@
   # TRISHAK
   ### From Crisis to Clarity
   ### Real-Time • Coordinate • Save Lives
-
-  [Watch Demo Video](https://drive.google.com/file/d/1yed9suBHzqEF3HBG_am_HxfoCNzwgJln/view)
 </div>
 
 ## README
@@ -16,9 +14,9 @@
 
 Introducing TRISHAK: an AI-powered emergency response platform for hospitals, hotels, campuses, offices, and other high-risk environments. TRISHAK enables one-tap SOS, role-based responder assignment, real-time incident coordination, ETA tracking, and escalation through SMS/call alerts so the right help reaches at the right time.
 
-Watch the product demo on:
+Watch the product demo here:
 
-[Demo Video](https://drive.google.com/uc?export=view&id=1yed9suBHzqEF3HBG_am_HxfoCNzwgJln)
+[Demo Video](https://drive.google.com/file/d/1yed9suBHzqEF3HBG_am_HxfoCNzwgJln/view)
 
 ## ⚠️ Initial Survey and Problem Statement Research
 
