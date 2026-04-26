@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-pulse-red: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  /* Theme specific colors */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-accent-emergency: var(--accent-emergency);
+  --color-accent-glow: var(--accent-glow);
+
+  @keyframes pulse-red {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 var(--accent-glow);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 20px 10px rgba(220, 38, 38, 0);
+    }
+  }
+}
+
+:root {
+  --bg-primary: #f8fafc; /* slate-50 */
+  --bg-secondary: #ffffff;
+  --text-primary: #0f172a; /* slate-900 */
+  --text-secondary: #64748b; /* slate-500 */
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0; /* slate-200 */
+  --accent-emergency: #dc2626; /* red-600 */
+  --accent-glow: rgba(220, 38, 38, 0.4);
+}
+
+.dark {
+  --bg-primary: #0b0f1a; /* deep navy/black */
+  --bg-secondary: #121826; /* elevated dark */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8; /* slate-400 */
+  --card-bg: #121826;
+  --card-border: #1e293b; /* slate-800 */
+  --accent-emergency: #ff3b3b; /* glowing red */
+  --accent-glow: rgba(255, 59, 59, 0.4);
+}
+
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  @apply bg-bg-primary text-text-primary antialiased;
+  -webkit-overflow-scrolling: touch;
+}
+
+.theme-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card {
+  @apply bg-card-bg border border-card-border shadow-sm;
+  backdrop-filter: blur(8px);
+}
+
+.dark .glow-red {
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.dark .glow-orange {
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+}

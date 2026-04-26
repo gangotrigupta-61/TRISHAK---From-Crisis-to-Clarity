@@ -1,0 +1,246 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // PRIMITIVES & HELPERS
+    // ===============================================================
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User Data Helpers
+    function getMyData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function getMyOrgId() {
+      // Use existing resource data if available to avoid get() for incidents/users read/update
+      return (isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))) 
+             ? getMyData().get('organizationId', '') 
+             : '';
+    }
+    
+    function getMyRole() {
+      return (isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid))) 
+             ? getMyData().get('role', 'guest') 
+             : 'guest';
+    }
+
+    // Role Helpers
+    function isAdmin() {
+      return isSignedIn() && (
+        (isEmailVerified() && request.auth.token.email in [
+          "gangotrigupta61@gmail.com",
+          "teamnexushackmatrix2.0@gmail.com",
+          "gangotriarcade2.cloud@gmail.com",
+          "anamika.verma102004@gmail.com",
+          "annu.verma422004@gmail.com",
+          "annu_be24al014@srmcem.ac.in",
+          "nextora007@gmail.com",
+          "sachendra.kumar1978@gmail.com",
+          "gangotrigupta07@gmail.com"
+        ]) || 
+        // Fallback to checking the document if email is not available or not in list
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', '') == 'admin')
+      );
+    }
+
+    function isStaff() {
+      return isSignedIn() && (
+        isAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'guest') in ['receptionist', 'staff', 'security', 'responder'])
+      );
+    }
+
+    function isReceptionist() {
+      return isSignedIn() && (
+        isAdmin() || 
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'guest') == 'receptionist')
+      );
+    }
+
+    // ===============================================================
+    // ENTITY VALIDATORS
+    // ===============================================================
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email', 'role']) &&
+             data.uid == request.auth.uid &&
+             data.email is string && data.email.size() < 256 &&
+             data.role in ['guest', 'receptionist', 'staff', 'security', 'admin', 'responder'] &&
+             data.get('displayName', '').size() < 128 &&
+             data.get('photoURL', '').size() < 1000 &&
+             data.get('organizationId', '').size() < 128 &&
+             data.get('uniqueId', '').size() < 128 &&
+             data.get('guestTokenId', '').size() < 128 &&
+             data.get('status', 'active') in ['active', 'inactive'] &&
+             (!('securityType' in data) || data.securityType == null || data.securityType in ['fire', 'medical', 'theft', 'other']);
+    }
+
+    function isValidIncident(data) {
+      return data.keys().hasAll(['type', 'severity', 'status', 'reporterId', 'location', 'createdAt', 'organizationId']) &&
+             data.organizationId is string && data.organizationId.size() < 128 &&
+             data.reporterId == request.auth.uid &&
+             data.type in ['fire', 'medical', 'theft', 'other'] &&
+             data.severity in ['critical', 'high', 'medium', 'low'] &&
+             data.status in ['reported', 'acknowledged', 'assigned', 'escalated', 'responding', 'resolved', 'closed'] &&
+             data.location.lat is number && data.location.lng is number &&
+             data.get('description', '').size() < 5000 &&
+             data.createdAt == request.time &&
+             (!('securityType' in data) || data.securityType == null || data.securityType in ['fire', 'medical', 'theft', 'other']);
+    }
+
+    function isValidMessage(data, incidentId) {
+      return data.keys().hasAll(['incidentId', 'senderId', 'text', 'timestamp']) &&
+             data.incidentId == incidentId &&
+             (data.senderId == request.auth.uid || data.senderId == 'ai' || data.senderId == 'system') &&
+             data.text is string && data.text.size() < 1000 &&
+             data.timestamp == request.time;
+    }
+
+    // ===============================================================
+    // COLLECTION RULES
+    // ===============================================================
+
+    match /organizations/{orgId} {
+      allow read: if true;
+      allow create: if isSignedIn() && isAdmin();
+      allow update: if isSignedIn() && (isAdmin() || (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.organizationId == orgId));
+    }
+
+    match /users/{userId} {
+      // Allow all reads for now to ensure server can fetch active responders
+      allow read: if true;
+      
+      allow create: if isSignedIn() && isValidUser(incoming()) && isOwner(userId);
+      allow update: if isSignedIn() && isValidUser(incoming()) && isOwner(userId) &&
+                    incoming().diff(existing()).affectedKeys().hasOnly([
+                      'uid', 'email', 'displayName', 'photoURL', 'status', 'role', 
+                      'organizationId', 'uniqueId', 'guestTokenId', 'securityType',
+                      'updatedAt', 'lastDutyChange', 'verifiedBy', 'lastLocation',
+                      'phone', 'createdAt', 'lastLogin'
+                    ]) &&
+                    (incoming().uid == existing().uid) &&
+                    (incoming().email == existing().email);
+    }
+
+    match /incidents/{incidentId} {
+      // Allow all reads for now to ensure visibility during emergencies
+      allow read: if true;
+      
+      // Allow server-side updates (alertsSent) and valid reports
+      allow update: if (incoming().diff(existing()).affectedKeys().hasOnly(['alertsSent'])) || isSignedIn();
+      allow create: if isSignedIn() && isValidIncident(incoming());
+      
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        // Staff check: must belong to the same organization
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.organizationId == get(/databases/$(database)/documents/incidents/$(incidentId)).data.organizationId)
+      );
+
+      match /messages/{messageId} {
+        // Simplified reader check: if you can read the incident, you can read messages if you are signed in
+        allow read: if isSignedIn();
+        
+        // Any signed-in user can post to an incident room they can see
+        allow create: if isSignedIn() && isValidMessage(incoming(), incidentId);
+      }
+    }
+
+    match /guestTokens/{tokenId} {
+      allow get: if isSignedIn() && (isStaff() || existing().status == 'active' || existing().get('guestId', '') == request.auth.uid);
+      allow list: if isSignedIn() && (
+        (isStaff() && existing().organizationId == getMyOrgId()) ||
+        (existing().guestPhone == request.auth.token.email) ||
+        (existing().guestPhone == request.auth.token.phone_number)
+      );
+      allow create: if isSignedIn() && isReceptionist();
+      allow update: if isSignedIn() && (
+        isReceptionist() || 
+        (existing().status == 'active' && incoming().status == 'used' && incoming().guestId == request.auth.uid) ||
+        (existing().status == 'used' && existing().get('guestId', '') == request.auth.uid)
+      );
+      allow delete: if isSignedIn() && isReceptionist();
+    }
+
+    match /guests/{guestId} {
+      // Allow get for verification
+      allow get: if isSignedIn();
+      
+      // Allow list only for staff members
+      allow list: if isSignedIn() && isStaff();
+      
+      allow create: if isSignedIn() && isReceptionist();
+      
+      allow update: if isSignedIn() && (
+        isStaff() || 
+        // Action: Activate token (active -> used)
+        (
+          existing().status == 'active' && 
+          incoming().status == 'used' && 
+          incoming().usedBy == request.auth.uid
+        ) ||
+        // Action: Reuse token (already used, check owner)
+        (
+          existing().status == 'used' && 
+          (existing().get('usedBy', '') == request.auth.uid || existing().get('guestId', '') == request.auth.uid)
+        )
+      );
+      
+      allow delete: if isSignedIn() && isReceptionist();
+    }
+
+    match /guestSessions/{sessionId} {
+      allow read: if isSignedIn() && (isStaff() || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    match /roleCodes/{codeId} {
+      allow read: if isSignedIn();
+      allow create, delete: if isSignedIn() && isAdmin();
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (
+          existing().status == 'active' && 
+          (existing().get('assignedTo', '') == '' || existing().get('assignedTo', null) == null || existing().assignedTo == request.auth.uid) && 
+          incoming().assignedTo == request.auth.uid
+        )
+      );
+    }
+
+    match /alertLogs/{logId} {
+      allow read: if isSignedIn() && isStaff();
+      allow create: if true; // Backend can write, and client can log if needed
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "name": "TRISHAK",
+  "description": "AI-powered emergency crisis management and response platform for hospitals, hotels, and restaurants.",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"]
+}
