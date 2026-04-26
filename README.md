@@ -177,4 +177,4 @@ Thanks to mentors, peers, and domain experts who helped validate emergency workf
 ## 🔗 Links
 
 - Live App: https://ai.studio/apps/1616e448-ddfa-4c54-97da-6bdb08bee7bc
-- Demo Video: https://drive.google.com/uc?export=view&id=1yed9suBHzqEF3HBG_am_HxfoCNzwgJln
+- Demo Video: https://drive.google.com/file/d/1yed9suBHzqEF3HBG_am_HxfoCNzwgJln/view
