@@ -6,6 +6,8 @@
   # TRISHAK
   ### From Crisis to Clarity
   ### Real-Time • Coordinate • Save Lives
+
+  [Watch Demo Video](https://drive.google.com/file/d/1yed9suBHzqEF3HBG_am_HxfoCNzwgJln/view)
 </div>
 
 ## README
