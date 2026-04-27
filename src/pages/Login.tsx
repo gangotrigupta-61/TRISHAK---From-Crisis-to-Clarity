@@ -333,7 +333,7 @@ export default function Login() {
   return (
     <div className="min-h-screen bg-bg-primary flex flex-col items-center justify-center p-6 transition-colors duration-500">
       {(loading || authLoading) && (
-        <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm z-[200] flex items-center justify-center transition-colors">
+        <div className="fixed inset-0 bg-bg-primary/80 backdrop-blur-sm z-200 flex items-center justify-center transition-colors">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border-4 border-accent-emergency border-t-transparent rounded-full animate-spin"></div>
             <p className="text-text-primary font-black uppercase tracking-widest text-xs">Authenticating...</p>

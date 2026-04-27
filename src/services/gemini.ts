@@ -18,7 +18,7 @@ export const analyzeIncidentImage = async (base64Image: string, incidentType: st
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp", 
+      model: "gemini-1.5-flash", 
       contents: [{
         parts: [
           {
@@ -60,7 +60,7 @@ export const generateIncidentSummary = async (incident: Incident) => {
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",
       contents: `Generate a concise emergency incident summary for the following:
       Type: ${incident.type}
       Severity: ${incident.severity}
@@ -82,7 +82,7 @@ export const generateResponsePlan = async (incident: Incident) => {
   try {
     const ai = getAI();
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-flash",
       contents: `Create a step-by-step emergency response plan for:
       Type: ${incident.type}
       Severity: ${incident.severity}
@@ -102,7 +102,7 @@ export const generateResponsePlan = async (incident: Incident) => {
       },
     });
     
-    const text = response.text;
+    const text = response.text ?? "";
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     return JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
   } catch (error) {
