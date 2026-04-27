@@ -8,15 +8,157 @@
   ### Real-Time • Coordinate • Save Lives
 </div>
 
-## README
+## 📘 README
 
-### TRISHAK
+### 🚨 TRISHAK
 
 Introducing TRISHAK: an AI-powered emergency response platform for hospitals, hotels, campuses, offices, and other high-risk environments. TRISHAK enables one-tap SOS, role-based responder assignment, real-time incident coordination, ETA tracking, and escalation through SMS/call alerts so the right help reaches at the right time.
 
 Watch the product demo here:
 
 [Demo Video](https://drive.google.com/file/d/1yed9suBHzqEF3HBG_am_HxfoCNzwgJln/view)
+
+---
+
+## 🧪 Prototype Testing Flow
+
+> Guest SOS → Receptionist Assignment → Security/Staff Response → ETA Tracking → Coordination Room → Resolution
+
+---
+
+## 🧪 How to Test the Prototype
+
+Follow this flow to test TRISHAK end-to-end:
+
+### 1️⃣ Open the Prototype
+
+Open the deployed TRISHAK prototype link: https://trishak.netlify.app/login
+
+### 2️⃣ Login as Admin
+
+Use the Admin account to access the main dashboard.
+
+Admin can:
+
+- Create organization setup
+- Generate role IDs
+- View all incidents
+- Monitor active emergencies
+- Use “Make it Global” for escalation
+
+### 3️⃣ Generate Role IDs
+
+From Admin dashboard, generate IDs for:
+
+- Receptionist
+- Security
+- Staff
+
+These IDs are used for role-based login.
+
+After successful ID creation, the login credentials for Admin and Receptionist are sent through SMS via Twilio.
+
+---
+
+### 4️⃣ Login as Receptionist
+
+Use the generated Receptionist ID.
+
+Receptionist can:
+
+- View emergency alerts
+- Assign incidents to the correct responder
+- Escalate to Admin
+- Open the Common Incident Room
+
+---
+
+### 5️⃣ Login as Guest
+
+Guest signs in and enters Guest ID.
+
+Guest can:
+
+- Trigger SOS
+- Select incident type
+- Send emergency details
+- View updates in Coordination Room
+
+---
+
+### 6️⃣ Trigger an SOS
+
+From Guest dashboard:
+
+- Click SOS
+- Select incident type:
+  - Fire
+  - Theft
+  - Medical
+  - Other
+- Submit emergency
+
+---
+
+### 7️⃣ Assign the Incident
+
+Receptionist receives the alert and assigns it to:
+
+- Medical Security for medical emergency
+- Security for theft/fire
+- Staff if support is needed
+
+---
+
+### 8️⃣ Responder Accepts
+
+Login as Security / Staff.
+
+Responder can:
+
+- View assigned incident
+- Acknowledge request
+- Send ETA
+- Update status
+
+---
+
+### 9️⃣ Track in Coordination Room
+
+All stakeholders can view:
+
+- Incident details
+- ETA
+- Live updates
+- Messages
+- Escalation status
+
+---
+
+### 🔟 Resolve the Incident
+
+Responder marks help as reached.
+
+Then:
+
+- Incident is closed
+- Digital log is created
+- Status becomes resolved
+
+---
+
+### ✅ Expected Output
+
+After testing, you should see:
+
+- SOS successfully created
+- Receptionist receives alert
+- Correct responder assigned
+- ETA visible
+- Coordination room updates
+- Incident resolved and logged
+
+---
 
 ## ⚠️ Initial Survey and Problem Statement Research
 
@@ -31,6 +173,8 @@ This delay and confusion can cost critical minutes during medical, fire, theft, 
 
 TRISHAK is built to solve this gap with centralized, role-aware, real-time crisis response.
 
+---
+
 ## ⭐🚀 Features
 
 - One-Tap SOS Activation: Trigger incidents instantly with type and location details.
@@ -44,6 +188,8 @@ TRISHAK is built to solve this gap with centralized, role-aware, real-time crisi
 - Multi-Role Experience: Guest, receptionist, security, staff, and admin workflows.
 - Reliability in Restricted Networks: Long-polling fallback for stable incident polling.
 
+---
+
 ## 👀 Upcoming Features
 
 - Auto-assignment based on responder distance and live availability
@@ -53,9 +199,13 @@ TRISHAK is built to solve this gap with centralized, role-aware, real-time crisi
 - Executive incident analytics dashboard with response KPIs
 - Smart runbooks by incident type (medical, fire, theft, other)
 
+---
+
 ## 🏃‍♀️ Getting Started
 
 Use this repository to run the TRISHAK web platform. Mobile companion code is available in the mobile folder.
+
+---
 
 ### 📝 Prerequisites
 
@@ -65,6 +215,8 @@ Before you start, make sure you have installed the following:
 - Firebase project with Firestore and Authentication enabled
 - Twilio account (for SMS/call alerts)
 - Gemini API key
+
+---
 
 ### 🛠️ Installation
 
@@ -101,7 +253,9 @@ NODE_ENV=development
 npm run dev
 ```
 
-TRISHAK runs on http://localhost:3000.
+TRISHAK runs on https://trishak.netlify.app/login
+
+---
 
 ## ❓ How to Use
 
@@ -130,6 +284,8 @@ Critical incidents fan out through SMS and calls to maximize alert reach.
 ### 📊 Close and Review Incident
 
 Resolved incidents are logged for audit trails and future response improvement.
+
+---
 
 ## 🧱 Tech Stack
 
@@ -176,5 +332,5 @@ Thanks to mentors, peers, and domain experts who helped validate emergency workf
 
 ## 🔗 Links
 
-- Live App: https://ai.studio/apps/1616e448-ddfa-4c54-97da-6bdb08bee7bc
+- Live App: https://trishak.netlify.app/login
 - Demo Video: https://drive.google.com/file/d/1yed9suBHzqEF3HBG_am_HxfoCNzwgJln/view
