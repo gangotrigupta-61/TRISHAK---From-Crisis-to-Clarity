@@ -235,7 +235,7 @@ async function startServer() {
     for (const user of users) {
       if (!user.phone) continue;
       try {
-        await twilioClient!.messages.create({ body: smsMessage, from: process.env.TWILIO_PHONE_NUMBER, to: user.phone });
+        await twilioClient!.messages.create({ body: smsMessage, from: process.env.TWILIO_PHONE_NUMBER!, to: user.phone });
         
         // Log via Client SDK
         await clientAddDoc(clientCollection(watcherDb, 'alertLogs'), {
@@ -248,7 +248,7 @@ async function startServer() {
         if (incident.severity === 'critical' || incident.isGlobal) {
           await twilioClient!.calls.create({
             twiml: `<Response><Say voice="alice">Emergency alert. Assistance required at ${incident.location.address}.</Say></Response>`,
-            from: process.env.TWILIO_PHONE_NUMBER,
+            from: process.env.TWILIO_PHONE_NUMBER!,
             to: user.phone
           });
           
