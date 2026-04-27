@@ -16,7 +16,7 @@ export default function MapView() {
   return (
     <div className={cn(
       "flex flex-col gap-4 lg:gap-6 relative transition-all duration-500",
-      isFullscreen ? "fixed inset-0 z-[200] bg-bg-primary p-4 md:p-10" : "h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] pb-16 lg:pb-0 font-sans transition-colors duration-500"
+      isFullscreen ? "fixed inset-0 z-200 bg-bg-primary p-4 md:p-10" : "h-[calc(100vh-180px)] lg:h-[calc(100vh-140px)] pb-16 lg:pb-0 font-sans transition-colors duration-500"
     )}>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3 lg:gap-4 transition-colors">
