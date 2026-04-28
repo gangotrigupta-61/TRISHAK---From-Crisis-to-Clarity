@@ -4,6 +4,6 @@
     "buildCommand": "npm install"
   },
   "deploy": {
-    "startCommand": "npx ts-node server.ts"
+    "startCommand": "npm run start:backend"
   }
 }
