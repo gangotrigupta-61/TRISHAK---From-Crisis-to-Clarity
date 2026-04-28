@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "npm install"
+  },
+  "deploy": {
+    "startCommand": "npx ts-node server.ts"
+  }
+}
